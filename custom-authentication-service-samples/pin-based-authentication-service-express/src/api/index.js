@@ -81,7 +81,11 @@ app.post("/api/authenticate", (req, res) => {
     if (!flowId) return handleError(res, 400, "missingFlowId", "Flow ID is required.");
 
     if (!sessionStore.has(flowId)) {
-        sessionStore.set(flowId, { tenant: event.tenant.name, user: config.AUTH_MODE === "second_factor" ? event.user : null });
+        sessionStore.set(flowId, { 
+            tenant: event.tenant.name, 
+            organization: event.organization ? event.organization.id : null, 
+            user: config.AUTH_MODE === "second_factor" ? event.user : null 
+        });
         const pinEntryUrl = `${config.HOST_URL}/api/pin-entry?flowId=${flowId}`;
         const response = { actionStatus: "INCOMPLETE", operations: [{ op: "redirect", url: pinEntryUrl }] };
         logResponse(req, response);
@@ -101,10 +105,9 @@ app.get("/api/pin-entry", (req, res) => {
     const { flowId } = req.query;
     if (!flowId || !sessionStore.has(flowId)) return res.status(400).send("Invalid or expired Flow ID.");
 
-    const session = sessionStore.get(flowId);
-    const userField = config.AUTH_MODE === "second_factor" && session.user ? 
-        `<input type="hidden" name="userId" value="${session.user.id}" />` : 
-        '<input type="text" name="username" required placeholder="Username" />';
+    const userField = (config.AUTH_MODE === "federated" || config.AUTH_MODE === "internal") ? 
+        '<input type="text" name="username" required placeholder="Username" />' : 
+        '';
 
     const response = `
         <html>
@@ -112,7 +115,6 @@ app.get("/api/pin-entry", (req, res) => {
             <h2>Enter Your PIN</h2>
             <form action="/api/validate-pin" method="POST">
                 <input type="hidden" name="flowId" value="${flowId}" />
-                <input type="hidden" name="tenant" value="${session.tenant}" />
                 ${userField}
                 <input type="password" name="pin" required placeholder="PIN"/>
                 <button type="submit">Submit</button>
@@ -126,11 +128,14 @@ app.get("/api/pin-entry", (req, res) => {
 // Validate PIN & Redirect
 app.post("/api/validate-pin", (req, res) => {
     logRequest(req);
-    const { flowId, userId, username, pin, tenant } = req.body;
+    const { flowId, username, pin } = req.body;
 
-    console.log("session", sessionStore.get(flowId));
+    if (!flowId || !sessionStore.has(flowId)) {
+        return handleError(res, 400, "validationError", "Session correlating data not found.");
+    }
 
-    if (!flowId || !tenant) return handleError(res, 400, "validationError", "Session correlating data not found.");
+    const session = sessionStore.get(flowId);
+    const { tenant, organization, userId } = session;
 
     const userDatabase = getUserDatabase();
     let userAuthenticating = config.AUTH_MODE === "second_factor" ? userDatabase.find(u => u.id === userId) : userDatabase.find(u => u.username === username);
@@ -142,7 +147,9 @@ app.post("/api/validate-pin", (req, res) => {
         sessionStore.set(flowId, { status: "FAILED" });
     }
 
-    const redirectUrl = `${config.BASE_WSO2_IAM_PROVIDER_URL}/t/${tenant}/commonauth?flowId=${flowId}`;
+    const redirectUrl = organization ? 
+        `${config.BASE_WSO2_IAM_PROVIDER_URL}/o/${organization}/commonauth?flowId=${flowId}` : 
+        `${config.BASE_WSO2_IAM_PROVIDER_URL}/t/${tenant}/commonauth?flowId=${flowId}`;
     logResponse(req, { redirectingTo: redirectUrl });
     return res.redirect(redirectUrl);
 });
