@@ -1,17 +1,28 @@
-const nodemailer = require('nodemailer');
+const express = require('express');
+const nodemailer = require("nodemailer");
 require("dotenv").config();
+
+const app = express();
+const PORT = 3000;
+
+// Middleware to parse JSON request bodies
+app.use(express.json());
+
+// Root endpoint
+app.get('/', (req, res) => {
+    return res.status(200).json({"status": "ok", "message": "Service is running."});
+});
 
 // Mock: valid department list (simulating a directory check)
 const validDepartments = ["Engineering", "HR", "Sales", "Finance"];
-const VALID_API_KEY = process.env.API_KEY; // Replace with your actual key
 
-// Email transporter config using environment variables
+// Email transporter config
 const transporter = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
     auth: {
-        user: process.env.MAILTRAP_USER,
-        pass: process.env.MAILTRAP_PASS
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
     }
 });
 
@@ -21,30 +32,8 @@ const getClaimValue = (claims, uri) => {
     return claim ? claim.value : null;
 };
 
-module.exports = async (req, res) => {
-    if (req.method !== 'POST') {
-        return res.status(405).send('Method Not Allowed');
-    }
-
-    // Validate API key from headers
-    const apiKey = req.headers['api-key'];
-    if (!apiKey || apiKey !== VALID_API_KEY) {
-        return res.status(401).json({
-            actionStatus: 'FAILED',
-            failureReason: 'unauthorized',
-            failureDescription: 'Invalid or missing API key.',
-        });
-    }
-
+app.post("/validate-user-profile-update", async (req, res) => {
     const payload = req.body;
-
-    if (payload.actionType !== "PRE_UPDATE_PROFILE") {
-        return res.status(200).json({
-            actionStatus: "FAILED",
-            failureReason: "invalid_input",
-            failureDescription: "Invalid actionType provided."
-        });
-    }
 
     const claims = payload?.event?.request?.claims || [];
     const userId = payload?.event?.user?.id || "Unknown User";
@@ -68,11 +57,14 @@ module.exports = async (req, res) => {
     if (email) changes.push(`Email: ${email}`);
     if (phone) changes.push(`Phone: ${phone}`);
 
+    const fromEmailAddress = process.env.FROM_EMAIL;
+    const toEmailAddress = process.env.TO_EMAIL;
+
     if (changes.length > 0) {
         try {
             await transporter.sendMail({
-                from: '"Security Alert" <security-notifications@wso2.com>',
-                to: "security-team@wso2.com", // Replace with actual security email
+                from: `"Security Alert" <${fromEmailAddress}>`,
+                to: toEmailAddress,
                 subject: "Sensitive Attribute Update Request",
                 text: `User ${userId} is attempting to update:\n\n${changes.join("\n")}`
             });
@@ -86,5 +78,11 @@ module.exports = async (req, res) => {
         }
     }
 
-    return res.status(200).json({ actionStatus: "SUCCESS" });
-};
+    // All validations passed
+    return res.status(200).json({actionStatus: "SUCCESS"});
+});
+
+// Start the server
+app.listen(PORT, () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
+});

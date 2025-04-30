@@ -21,18 +21,6 @@ exports.handler = async (event) => {
     // Parse the incoming event body to JSON
     const payload = JSON.parse(event.body || '{}');
 
-    // Ensure this handler only processes PRE_UPDATE_PROFILE actions
-    if (payload.actionType !== "PRE_UPDATE_PROFILE") {
-        return {
-            statusCode: 200,
-            body: JSON.stringify({
-                actionStatus: "FAILED",
-                failureReason: "invalid_input",
-                failureDescription: "Invalid actionType provided."
-            })
-        };
-    }
-
     // Extract user claims and user ID from the payload
     const claims = payload?.event?.request?.claims || [];
     const userId = payload?.event?.user?.id || "Unknown User";
@@ -60,23 +48,26 @@ exports.handler = async (event) => {
     if (email) changes.push(`Email: ${email}`);
     if (phone) changes.push(`Phone: ${phone}`);
 
+    const fromEmailAddress = process.env.FROM_EMAIL;
+    const toEmailAddress = process.env.TO_EMAIL;
+
     // If there are changes, notify the security team via email
     if (changes.length > 0) {
-        // Create a transporter for sending email via Mailtrap SMTP
+        // Create a transporter for sending email via SMTP
         const transporter = nodemailer.createTransport({
-            host: "sandbox.smtp.mailtrap.io",
-            port: 2525,
+            host: process.env.SMTP_HOST,
+            port: process.env.SMTP_PORT,
             auth: {
-                user: process.env.MAILTRAP_USER,
-                pass: process.env.MAILTRAP_PASS
+                user: process.env.SMTP_USER,
+                pass: process.env.SMTP_PASS
             }
         });
 
         try {
             // Send the notification email
             await transporter.sendMail({
-                from: '"Security Alert" <security-notifications@wso2.com>',
-                to: "security-team@wso2.com",
+                from: `"Security Alert" <${fromEmailAddress}>`,
+                to: toEmailAddress,
                 subject: "Sensitive Attribute Update Request",
                 text: `User ${userId} is attempting to update:\n\n${changes.join("\n")}`
             });
