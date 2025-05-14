@@ -33,7 +33,7 @@ This function implements an adaptive token issuance policy using IP-based compli
 ## Features
 
 - Blocks access token issuance for restricted countries or regions
-- Evaluates IP risk scores using AbuseIPDB
+- Evaluates IP risk scores using [AbuseIPDB](https://www.abuseipdb.com/)
 - Dynamically adjusts token expiry time based on risk score and login time (UTC)
 - Allows tokens with full expiry only for low-risk IPs
 - Designed to run as an AWS Lambda function for easy deployment
