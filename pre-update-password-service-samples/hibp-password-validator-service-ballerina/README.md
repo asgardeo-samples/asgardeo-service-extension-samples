@@ -2,7 +2,6 @@
 
 This is a Ballerina-based password validation service that integrates with the [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API to check if a password has been compromised in data breaches when a user attempts to update their password.
 
-
 > **Note:** This sample is for demonstration only and should not be used in production. It supports the **Pre Update Password Action** of both [Asgardeo](https://console.asgardeo.io/) and [WSO2 Identity Server](https://wso2.com/identity-server/).
 
 ## Table of Contents

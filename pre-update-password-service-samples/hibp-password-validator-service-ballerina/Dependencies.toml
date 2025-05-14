@@ -299,7 +299,7 @@ modules = [
 ]
 
 [[package]]
-org = "omal"
+org = "hibp"
 name = "extensions_hibp_ballerina"
 version = "0.1.0"
 dependencies = [
@@ -309,6 +309,6 @@ dependencies = [
 	{org = "ballerinai", name = "observe"}
 ]
 modules = [
-	{org = "omal", packageName = "extensions_hibp_ballerina", moduleName = "extensions_hibp_ballerina"}
+	{org = "hibp", packageName = "extensions_hibp_ballerina", moduleName = "extensions_hibp_ballerina"}
 ]
 
