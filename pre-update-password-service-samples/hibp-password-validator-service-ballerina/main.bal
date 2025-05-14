@@ -8,8 +8,8 @@ service / on proxyListener {
 
     resource function get .() returns json {
         return {
-            "message":"Pre-password update service up and running!",
-            "status":"OK"
+            "message":"Service is running.",
+            "status":"ok"
         };
     }
 

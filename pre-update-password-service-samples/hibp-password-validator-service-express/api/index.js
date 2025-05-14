@@ -12,8 +12,8 @@ app.use(json({ limit: "100kb" }));
 
 app.get("/", (_req, res) => {
     res.json({
-        message: "Pre-password update service up and running!",
-        status: "OK",
+        message: "Service is running.",
+        status: "ok",
     });
 });
 

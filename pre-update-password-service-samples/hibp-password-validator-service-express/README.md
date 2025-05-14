@@ -1,6 +1,6 @@
-# Express-based HIBP Integration for Password Update Service
+# HIBP Password Validator Service with Express
 
-This is a Node.js Express-based password update service that integrates with the HaveIBeenPwned (HIBP) API to check if a password has been compromised in data breaches.
+This is a Node.js and Ballerina based password validation service that integrates with the [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API to check if a password has been compromised in data breaches when a user attempts to update their password.
 
 
 > **Note:** This sample is for demonstration only and should not be used in production. It supports the **Pre Update Password Action** of both [Asgardeo](https://console.asgardeo.io/) and [WSO2 Identity Server](https://wso2.com/identity-server/).
@@ -16,9 +16,9 @@ This is a Node.js Express-based password update service that integrates with the
     - [Run the Service Locally](#run-the-service-locally)
     - [Deploy to Vercel (Required for Asgardeo)](#deploy-to-vercel-required-for-asgardeo)
   - [4️⃣ Verify the Service](#4-verify-the-service)
-- [Configure the Authenticator in Product](#configure-the-authenticator-in-product)
-  - [In WSO2 Identity Server](#configuring-the-authenticator-in-wso2-identity-server)
-  - [In Asgardeo](#configuring-the-authenticator-in-asgardeo)
+- [Configure the Action in Product](#configure-the-action-in-product)
+  - [In WSO2 Identity Server](#configuring-the-action-in-wso2-identity-server)
+  - [In Asgardeo](#configuring-the-action-in-asgardeo)
 - [API Endpoints](#api-endpoints)
 
 ## Overview
@@ -82,7 +82,7 @@ To deploy to **Vercel**, follow these steps:
 
 [← Back to Table of Contents](#table-of-contents)
 
-### 6. Verify the Service
+### 4. Verify the Service
 Run a health check to ensure the service is running:
 
 **If service is running locally:**
@@ -106,22 +106,22 @@ Expected Response:
 
 ```json
 {
-  "message":"Pre-password update service up and running!",
-  "status":"OK"
+  "message":"Service is running.",
+  "status":"ok"
 }
 ```
 
 [← Back to Table of Contents](#table-of-contents)
 
-### 7. Configure the Pre Update Password Action in Product
+## Configure the Action in Product
 
-#### Configuring the Action in WSO2 Identity Server
+### Configuring the Action in WSO2 Identity Server
 To integrate this service with WSO2 Identity Server, follow the step-by-step guide at the [documentation](https://is.docs.wso2.com/en/next/guides/service-extensions/pre-flow-extensions/pre-update-password-action/).
 
-#### Configuring the Action in Asgardeo
+### Configuring the Action in Asgardeo
 To integrate this service with Asgardeo, follow the step-by-step guide at the [documentation](https://wso2.com/asgardeo/docs/guides/service-extensions/pre-flow-extensions/pre-update-password-action/).
 
-#### Considerations applicable for both products
+### Considerations applicable for both products
 
 When configuring the pre-update password action, consider the following:
 
@@ -138,7 +138,7 @@ When configuring the pre-update password action, consider the following:
 This endpoint is to check if the service is successfully running.
 
 - **GET** `/`
-- **Response:** `{"message":"Pre-password update service up and running!","status":"OK"}`
+- **Response:** `{ "status": "ok", "message": "Service is running." }`
 
 ### **Validate Password**
 

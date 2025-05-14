@@ -1,6 +1,6 @@
-# Ballerina-based HIBP Integration for Password Update Service
+# HIBP Password Validator Service with Ballerina
 
-This is a Ballerina-based password update service that integrates with the HaveIBeenPwned (HIBP) API to check if a password has been compromised in data breaches.
+This is a Ballerina-based password validation service that integrates with the [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API to check if a password has been compromised in data breaches when a user attempts to update their password.
 
 
 > **Note:** This sample is for demonstration only and should not be used in production. It supports the **Pre Update Password Action** of both [Asgardeo](https://console.asgardeo.io/) and [WSO2 Identity Server](https://wso2.com/identity-server/).
@@ -11,21 +11,20 @@ This is a Ballerina-based password update service that integrates with the HaveI
 - [Prerequisites](#prerequisites)
 - [Setup Instructions](#setup-instructions)
   - [1️⃣ Clone the Repository](#1-clone-the-repository)
-  - [2️⃣ Install Dependencies](#2-install-dependencies)
-  - [3️⃣ Run the Service](#3-run-the-service)
+  - [2️⃣ Run the Service](#2-run-the-service)
     - [Run the Service Locally](#run-the-service-locally)
     - [Deploy to Choreo (Required for Asgardeo)](#deploy-to-choreo-required-for-asgardeo)
-  - [4️⃣ Verify the Service](#4-verify-the-service)
-- [Configure the Authenticator in Product](#configure-the-authenticator-in-product)
-  - [In WSO2 Identity Server](#configuring-the-authenticator-in-wso2-identity-server)
-  - [In Asgardeo](#configuring-the-authenticator-in-asgardeo)
+  - [3️⃣ Verify the Service](#3-verify-the-service)
+- [Configure the Action in Product](#configure-the-action-in-product)
+  - [In WSO2 Identity Server](#configuring-the-action-in-wso2-identity-server)
+  - [In Asgardeo](#configuring-the-action-in-asgardeo)
 - [API Endpoints](#api-endpoints)
 
 ## Overview
-This service implements a custom password update mechanism that checks if a password has been compromised using the HIBP API. It can be used as an external service extension for both Asgardeo and WSO2 Identity Server.
+This service implements a custom password validation mechanism that checks if a password has been compromised using the [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API. It can be used as an external service extension for both Asgardeo and WSO2 Identity Server.
 
 ## Features
-- HIBP API integration for password compromise checks
+- [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API integration for password compromise checks
 - Compatible with **Choreo** deployments
 
 ## Prerequisites
@@ -61,20 +60,20 @@ The service will be available at: **[http://localhost:3000](http://localhost:300
 
 [← Back to Table of Contents](#table-of-contents)
 
-### 6. Verify the Service
+### 3. Verify the Service
 // TODO: Add instructions for verifying the service
 
 [← Back to Table of Contents](#table-of-contents)
 
-### 7. Configure the Pre Update Password Action in Product
+## Configure the Action in Product
 
-#### Configuring the Action in WSO2 Identity Server
+### Configuring the Action in WSO2 Identity Server
 To integrate this service with WSO2 Identity Server, follow the step-by-step guide at the [documentation](https://is.docs.wso2.com/en/next/guides/service-extensions/pre-flow-extensions/pre-update-password-action/).
 
-#### Configuring the Action in Asgardeo
+### Configuring the Action in Asgardeo
 To integrate this service with Asgardeo, follow the step-by-step guide at the [documentation](https://wso2.com/asgardeo/docs/guides/service-extensions/pre-flow-extensions/pre-update-password-action/).
 
-#### Considerations applicable for both products
+### Considerations applicable for both products
 
 When configuring the pre-update password action, consider the following:
 
@@ -91,7 +90,7 @@ When configuring the pre-update password action, consider the following:
 This endpoint is to check if the service is successfully running.
 
 - **GET** `/`
-- **Response:** `{"message":"Pre-password update service up and running!","status":"OK"}`
+- **Response:** `{ "status": "ok", "message": "Service is running." }`
 
 ### **Validate Password**
 
