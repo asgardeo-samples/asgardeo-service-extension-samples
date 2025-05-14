@@ -1,0 +1,15 @@
+{
+  "name": "adaptive-token-issuance-policy",
+  "version": "1.0.0",
+  "description": "This sample demonstrates how to implement an **adaptive access token issuance policy** using a **Pre-Issue Access Token Extension**.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "geoip-country": "^5.0.202504292342"
+  }
+}
