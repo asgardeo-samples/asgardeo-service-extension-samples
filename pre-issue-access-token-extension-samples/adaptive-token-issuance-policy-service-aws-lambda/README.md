@@ -174,6 +174,19 @@ Create a new action:
 
 Save the action.
 
+> **Note for WSO2 Identity Server Integration:**  
+> If you are integrating this extension sample with WSO2 Identity Server, ensure that the `x-client-source-ip` header is forwarded to the service extension point.  
+>
+> 1. Open the `repository/conf/deployment.toml` file.
+> 2. Add the following configuration to allow forwarding the header in token requests:
+>
+>    ```toml
+>    [actions.types.pre_issue_access_token.action_request]
+>    allowed_headers = ["x-client-source-ip"]
+>    ```
+>
+> This configuration ensures that the Lambda function receives the client IP address for policy evaluation.
+
 
 ## Test Example Scenarios
 
