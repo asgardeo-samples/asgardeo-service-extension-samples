@@ -64,12 +64,12 @@ function isWorkingHours() {
 }
 
 export const handler = async (event) => {
-    console.log("Received event:", JSON.stringify(event, null, 2));
+    console.log("Received request:", JSON.stringify(event, null, 2));
 
     const ip = getClientIp(event);
     if (!ip) {
         console.warn("No IP address found. Denying the request by default.");
-        return denyResponse();
+        return denyResponse("Request denied: No client IP address provided.");
     }
 
     console.log(`Client IP: ${ip}`);
@@ -93,7 +93,7 @@ export const handler = async (event) => {
 
         if (abuseScore < 25) {
             console.log(`Allowed token issuance: Low abuse score (${abuseScore}). No modifications applied.`);
-            return allowResponse();
+            return allowResponse(country);
         }
 
         // Determine expiry based on score and login time
@@ -116,18 +116,41 @@ export const handler = async (event) => {
                         op: "replace",
                         path: "/accessToken/claims/expires_in",
                         value: expiry.toString()
+                    },
+                    {
+                        op: "add",
+                        path: "/accessToken/claims/-",
+                        value: {
+                            name: "country",
+                            value: country,
+                        }
                     }
                 ]
             })
         };
     } catch (err) {
         console.error("Error during AbuseIPDB lookup:", err.message);
-        return denyResponse();
+        return errorResponse("An error occurred while checking the IP address risk.");
     }
 };
 
+function errorResponse(reason) {
+    const response = {
+        statusCode: 500,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            actionStatus: "ERROR",
+            errorMessage: "server_error",
+            errorDescription: reason
+        })
+    };
+    
+    console.log("Returning error response:", JSON.stringify(response, null, 2));
+    return response;
+}
+
 function denyResponse(reason) {
-    return {
+    const response = {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -136,14 +159,29 @@ function denyResponse(reason) {
             failureDescription: reason
         })
     };
+    
+    console.log("Returning failed response:", JSON.stringify(response, null, 2));
+    return response;
 }
 
-function allowResponse() {
-    return {
+function allowResponse(country) {
+    const response = {
         statusCode: 200,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            actionStatus: "SUCCESS"
+            actionStatus: "SUCCESS",
+            operations: [
+                {
+                    op: "add",
+                    path: "/accessToken/claims/-",
+                    value: {
+                        name: "country",
+                        value: country,
+                    }
+                }
+            ]
         })
     };
+    console.log("Returning success response:", JSON.stringify(response, null, 2));
+    return response;
 }
