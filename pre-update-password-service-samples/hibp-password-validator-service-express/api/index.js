@@ -16,14 +16,14 @@ const logRequest = (req) => {
         method: req.method,
         url: req.originalUrl,
         headers: req.headers,
-        body: util.inspect(req.body, { depth: null }),
+        body: util.inspect(req.body, { depth: null })
     });
 };
 
 const logResponse = (req, resBody) => {
     console.log("Response Sent", {
         url: req.originalUrl,
-        responseBody: util.inspect(resBody, { depth: null }),
+        responseBody: util.inspect(resBody, { depth: null })
     });
 };
 
@@ -41,7 +41,7 @@ app.post("/passwordcheck", async (req, res) => {
             const response = {
                 actionStatus: "ERROR",
                 error: "invalid_request",
-                errorDescription: "Invalid JSON payload.",
+                errorDescription: "Invalid JSON payload."
             };
             logResponse(req, response);
             return res.status(400).json(response);
@@ -52,7 +52,7 @@ app.post("/passwordcheck", async (req, res) => {
             const response = {
                 actionStatus: "ERROR",
                 error: "invalid_credential",
-                errorDescription: "No password credential found.",
+                errorDescription: "No password credential found."
             };
             logResponse(req, response);
             return res.status(400).json(response);
@@ -67,7 +67,7 @@ app.post("/passwordcheck", async (req, res) => {
                 const response = {
                     actionStatus: "ERROR",
                     error: "invalid_credential",
-                    errorDescription: "Expects the encrypted credential.",
+                    errorDescription: "Expects the encrypted credential."
                 };
                 logResponse(req, response);
                 return res.status(400).json(response);
@@ -78,12 +78,15 @@ app.post("/passwordcheck", async (req, res) => {
         const prefix = sha1.slice(0, 5);
         const suffix = sha1.slice(5);
 
-        const hibpResp = await axios.get(`https://api.pwnedpasswords.com/range/${prefix}`, {
-            headers: {
-                "Add-Padding": "true",
-                "User-Agent": "hibp-demo",
-            },
-        });
+        const hibpResp = await axios.get(
+            `https://api.pwnedpasswords.com/range/${prefix}`,
+            {
+                headers: {
+                    "Add-Padding": "true",
+                    "User-Agent": "hibp-demo"
+                }
+            }
+        );
 
         const hitLine = hibpResp.data
             .split("\n")
@@ -95,7 +98,7 @@ app.post("/passwordcheck", async (req, res) => {
             const response = {
                 actionStatus: "FAILED",
                 failureReason: "password_compromised",
-                failureDescription: "The provided password is compromised.",
+                failureDescription: "The provided password is compromised."
             };
             logResponse(req, response);
             return res.status(200).json(response);
