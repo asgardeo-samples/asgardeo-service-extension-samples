@@ -1,6 +1,6 @@
-# HIBP Password Validator Service with Ballerina
+# HIBP Password Validator Service with Express
 
-This is a Ballerina-based password validation service that integrates with the [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API to check if a password has been compromised in data breaches when a user attempts to update their password.
+This is a Node.js and Ballerina based password validation service that integrates with the [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API to check if a password has been compromised in data breaches when a user attempts to update their password.
 
 > **Note:** This sample is for demonstration only and should not be used in production. It supports the **Pre Update Password Action** of both [Asgardeo](https://console.asgardeo.io/) and [WSO2 Identity Server](https://wso2.com/identity-server/).
 
@@ -10,25 +10,26 @@ This is a Ballerina-based password validation service that integrates with the [
 - [Prerequisites](#prerequisites)
 - [Setup Instructions](#setup-instructions)
   - [1️⃣ Clone the Repository](#1-clone-the-repository)
-  - [2️⃣ Run the Service](#2-run-the-service)
+  - [2️⃣ Install Dependencies](#2-install-dependencies)
+  - [3️⃣ Run the Service](#3-run-the-service)
     - [Run the Service Locally](#run-the-service-locally)
-    - [Deploy to Choreo (Required for Asgardeo)](#deploy-to-choreo-required-for-asgardeo)
-  - [3️⃣ Verify the Service](#3-verify-the-service)
+    - [Deploy to Vercel (Required for Asgardeo)](#deploy-to-vercel-required-for-asgardeo)
+  - [4️⃣ Verify the Service](#4-verify-the-service)
 - [Configure the Action in Product](#configure-the-action-in-product)
   - [In WSO2 Identity Server](#configuring-the-action-in-wso2-identity-server)
   - [In Asgardeo](#configuring-the-action-in-asgardeo)
 - [API Endpoints](#api-endpoints)
 
 ## Overview
-This service implements a custom password validation mechanism that checks if a password has been compromised using the [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API. It can be used as an external service extension for both Asgardeo and WSO2 Identity Server.
+This service implements a custom password update mechanism that checks if a password has been compromised using the HIBP API. It can be used as an external service extension for both Asgardeo and WSO2 Identity Server.
 
 ## Features
-- [HaveIBeenPwned (HIBP)](https://haveibeenpwned.com/) API integration for password compromise checks
-- Compatible with **Choreo** deployments
+- HIBP API integration for password compromise checks
+- Compatible with both **Vercel** and **Choreo** deployments
 
 ## Prerequisites
 Ensure you have the following installed:
-- **Ballerina Swan Lake** (>=2201.0.0)
+- **Node.js** (>=18.x)
 - **npm**
 
 ## Setup Instructions
@@ -36,31 +37,78 @@ Ensure you have the following installed:
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/asgardeo-samples/asgardeo-service-extension-samples.git
-cd password-update-service-samples/hibp-integration-ballerina/
+cd pre-update-password-extension-samples/hibp-password-validator-service-express
 ```
 
 [← Back to Table of Contents](#table-of-contents)
 
-### 2. Run the Service
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+[← Back to Table of Contents](#table-of-contents)
+
+### 3. Run the Service
 
 ### Run the Service Locally
 
 ```bash
-bal run
+npm start
 ```
 
 The service will be available at: **[http://localhost:3000](http://localhost:3000)**
 
 [← Back to Table of Contents](#table-of-contents)
 
-### Deploy to Choreo (Required for Asgardeo)
-// TODO: Add instructions for deploying to Choreo
+### Deploy to Vercel (Required for Asgardeo)
 
+> **Note:** Asgardeo can access only internet accessible services. So you can use a Vercel-like hosting tool to host your service.
+
+To deploy to **Vercel**, follow these steps:
+
+1. Make sure you have a vercel account.
+2. From the project root run below command to deploy the service.
+
+    ```bash
+    vercel --prod
+    ```
+
+    If you are setting up for the first time, the above command will prompt a set of questions. Refer to the image below.
+
+    ![vercel-setup](images/vercel-setup.png)
 
 [← Back to Table of Contents](#table-of-contents)
 
-### 3. Verify the Service
-// TODO: Add instructions for verifying the service
+### 4. Verify the Service
+Run a health check to ensure the service is running:
+
+**If service is running locally:**
+
+```bash
+curl http://localhost:3000
+```
+
+**If service is running in Vercel:**
+
+```bash
+curl https://your-vercel-app.vercel.app/
+```
+
+e.g.,
+```
+curl https://hibp-integration-express.vercel.app/
+```
+
+Expected Response:
+
+```json
+{
+  "message":"Service is running.",
+  "status":"ok"
+}
+```
 
 [← Back to Table of Contents](#table-of-contents)
 
