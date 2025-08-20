@@ -44,7 +44,7 @@ Ensure you have the following installed:
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/asgardeo-samples/asgardeo-service-extension-samples.git
-cd custom-authentication-service-samples/pin-based-authentication-service-express/src
+cd asgardeo-service-extension-samples/custom-authentication-service-samples/pin-based-authentication-service-express/src
 ```
 
 [← Back to Table of Contents](#table-of-contents)
@@ -58,7 +58,7 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Update the `.env` file in the project root (`src`) with the following:
+Create the `.env` file in the project root (`src`) with the following:
 
 ```env
 AUTH_MODE=federated  # Options: federated, internal, second_factor
