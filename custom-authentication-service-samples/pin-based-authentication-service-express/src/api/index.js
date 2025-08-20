@@ -84,7 +84,7 @@ app.post("/api/authenticate", (req, res) => {
         sessionStore.set(flowId, { 
             tenant: event.tenant.name, 
             organization: event.organization ? event.organization.id : null, 
-            user: config.AUTH_MODE === "second_factor" ? event.user : null 
+            userId: config.AUTH_MODE === "second_factor" ? event.user.id : null 
         });
         const pinEntryUrl = `${config.HOST_URL}/api/pin-entry?flowId=${flowId}`;
         const response = { actionStatus: "INCOMPLETE", operations: [{ op: "redirect", url: pinEntryUrl }] };
