@@ -81,9 +81,10 @@ app.post("/api/authenticate", (req, res) => {
     if (!flowId) return handleError(res, 400, "missingFlowId", "Flow ID is required.");
 
     if (!sessionStore.has(flowId)) {
+        const isOrganization = event?.organization?.orgHandle !== event?.tenant?.name;
         sessionStore.set(flowId, { 
             tenant: event.tenant.name, 
-            organization: event.organization ? event.organization.id : null, 
+            organization: isOrganization ? event.organization.id : null, 
             userId: config.AUTH_MODE === "second_factor" ? event.user.id : null 
         });
         const pinEntryUrl = `${config.HOST_URL}/api/pin-entry?flowId=${flowId}`;
